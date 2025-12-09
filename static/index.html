@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UofT AI Assistant</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="chat-header">
+        📘 UofT Syllabus Assistant
+    </div>
+    <div class="chat-messages" id="chat-box">
+        <div class="message ai">Hello! I'm your AI Assistant. Ask me anything about the syllabus!</div>
+    </div>
+    <div class="input-area">
+        <input type="text" id="user-input" placeholder="Type a question..." onkeypress="handleKeyPress(event)">
+        <button onclick="sendMessage()" id="send-btn">Send</button>
+    </div>
+</div>
+
+<script src="js/app.js"></script>
+
+</body>
+</html>
