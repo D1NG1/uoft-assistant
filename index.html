@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAT235 AI Tutor</title>
+    <style>
+        /* CSS 样式部分 */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .chat-container {
+            width: 400px;
+            height: 600px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background-color: #4a90e2;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 10px;
+            line-height: 1.4;
+            font-size: 0.9em;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background-color: #4a90e2;
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+
+        .message.ai {
+            align-self: flex-start;
+            background-color: #e9e9eb;
+            color: #333;
+            border-bottom-left-radius: 2px;
+        }
+
+        .input-area {
+            padding: 20px;
+            background-color: #fff;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #357abd;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+        }
+        
+        .loading {
+            font-style: italic;
+            color: #888;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="chat-header">
+        📘 MAT235 Syllabus Bot
+    </div>
+    <div class="chat-messages" id="chat-box">
+        <div class="message ai">Hello! I'm your AI Assistant. Ask me anything about the syllabus!</div>
+    </div>
+    <div class="input-area">
+        <input type="text" id="user-input" placeholder="Type a question..." onkeypress="handleKeyPress(event)">
+        <button onclick="sendMessage()" id="send-btn">Send</button>
+    </div>
+</div>
+
+<script>
+    // JavaScript 逻辑部分
+    const chatBox = document.getElementById('chat-box');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+
+    // 处理回车键发送
+    function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    }
+
+    // 添加消息到界面
+    function addMessage(text, sender) {
+        const div = document.createElement('div');
+        div.classList.add('message', sender);
+        div.innerText = text;
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight; // 自动滚动到底部
+    }
+
+    // 发送消息的主逻辑
+    async function sendMessage() {
+        const question = userInput.value.trim();
+        if (!question) return;
+
+        // 1. 显示用户问题
+        addMessage(question, 'user');
+        userInput.value = '';
+        
+        // 2. 禁用按钮，显示加载中
+        sendBtn.disabled = true;
+        const loadingDiv = document.createElement('div');
+        loadingDiv.className = 'loading';
+        loadingDiv.innerText = 'AI is thinking...';
+        chatBox.appendChild(loadingDiv);
+
+        try {
+            // 3. 调用后端 FastAPI 接口
+            const response = await fetch('http://127.0.0.1:8000/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ question: question })
+            });
+
+            const data = await response.json();
+            
+            // 4. 移除加载文字，显示 AI 回答
+            chatBox.removeChild(loadingDiv);
+            addMessage(data.answer, 'ai');
+
+        } catch (error) {
+            chatBox.removeChild(loadingDiv);
+            addMessage("Error: Could not connect to the backend.", 'ai');
+            console.error('Error:', error);
+        } finally {
+            sendBtn.disabled = false;
+        }
+    }
+</script>
+
+</body>
+</html>
