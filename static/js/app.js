@@ -1,5 +1,9 @@
 // UofT Assistant - 前端 JavaScript
 
+// 配置
+const API_BASE_URL = 'http://127.0.0.1:8000';
+const API_KEY = 'dev-secret-key-change-in-production';  // 从 .env 读取的 API 密钥
+
 // DOM 元素引用
 const chatBox = document.getElementById('chat-box');
 const userInput = document.getElementById('user-input');
@@ -40,10 +44,11 @@ async function sendMessage() {
     try {
         // 3. 调用后端 FastAPI 接口
         console.log('Sending question:', question);
-        const response = await fetch('http://127.0.0.1:8000/chat', {
+        const response = await fetch(`${API_BASE_URL}/chat`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${API_KEY}`
             },
             body: JSON.stringify({ question: question })
         });
@@ -52,9 +57,18 @@ async function sendMessage() {
         console.log('Response headers:', response.headers);
 
         if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Error response:', errorText);
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorData = await response.json().catch(() => ({ detail: 'Unknown error' }));
+            console.error('Error response:', errorData);
+
+            if (response.status === 401) {
+                throw new Error('认证失败：API 密钥无效');
+            } else if (response.status === 429) {
+                throw new Error('请求过于频繁，请稍后再试');
+            } else if (response.status === 503) {
+                throw new Error('服务暂时不可用，请稍后重试');
+            } else {
+                throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+            }
         }
 
         const data = await response.json();
