@@ -1,7 +1,7 @@
 // UofT Assistant - 前端 JavaScript
 
 // 配置
-// const API_BASE_URL = '';
+const API_BASE_URL = '';  // 使用相对路径通过 Nginx 代理
 const API_KEY = 'dev-secret-key-change-in-production';  // 从 .env 读取的 API 密钥
 
 // DOM 元素引用
