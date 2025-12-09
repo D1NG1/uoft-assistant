@@ -177,11 +177,11 @@ class RAGService:
 
         return tables_text
 
-    def _load_pdfs_to_vector_store(self, embeddings: OllamaEmbeddings) -> None:
+    def _load_pdfs_to_vector_store(self, embeddings: HuggingFaceEmbeddings) -> None:
         """加载所有 PDF 文件到向量数据库，为每个文档添加元数据
 
         Args:
-            embeddings: Ollama 嵌入模型实例
+            embeddings: HuggingFace 嵌入模型实例
 
         Raises:
             FileNotFoundError: 当未找到任何 PDF 文件时
