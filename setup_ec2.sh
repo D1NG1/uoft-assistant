@@ -40,7 +40,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 echo "步骤 5: 克隆项目代码..."
 cd /home/ubuntu
 if [ ! -d "uoft-assistant" ]; then
-    git clone https://github.com/YOUR_USERNAME/uoft-assistant.git
+    git clone https://github.com/D1NG1/uoft-assistant.git
 else
     echo "项目目录已存在，跳过克隆"
 fi

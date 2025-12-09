@@ -138,7 +138,7 @@ ssh -i uoft-assistant-key.pem ubuntu@YOUR_EC2_PUBLIC_IP
 
 ```bash
 # 1. 下载初始化脚本
-curl -O https://raw.githubusercontent.com/YOUR_USERNAME/uoft-assistant/main/setup_ec2.sh
+curl -O https://raw.githubusercontent.com/D1NG1/uoft-assistant/main/setup_ec2.sh
 
 # 2. 添加执行权限
 chmod +x setup_ec2.sh
@@ -180,7 +180,7 @@ sudo apt-get install -y python3.11 python3.11-venv python3-pip git nginx
 
 # 3. 克隆代码
 cd /home/ubuntu
-git clone https://github.com/YOUR_USERNAME/uoft-assistant.git
+git clone https://github.com/D1NG1/uoft-assistant.git
 cd uoft-assistant
 
 # 4. 创建虚拟环境
