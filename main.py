@@ -13,7 +13,7 @@ from langchain_core.runnables import RunnablePassthrough
 
 # --- 配置 ---
 PDF_PATH = "data/MAT235Y12025-26Syllabus.pdf"  # 请确保文件名和路径正确
-DB_PATH = "./chroma_db_web"     # 这里换个新名字，防止和之前的冲突
+DB_PATH = "./chroma_db"     # 这里换个新名字，防止和之前的冲突
 LLM_MODEL = "llama3"
 EMBED_MODEL = "nomic-embed-text" # 记得一定要用这个！
 
@@ -45,7 +45,7 @@ class RAGService:
             
             self.vector_store = Chroma.from_documents(
                 documents=splits,
-                embedding=embeddings,
+                embedding_function=embeddings,
                 persist_directory=DB_PATH
             )
             print("💾 [Backend] 向量库建立完成！")
@@ -110,8 +110,10 @@ async def chat_endpoint(request: QueryRequest):
     try:
         print(f"📩 收到问题: {request.question}")
         answer = rag_service.get_answer(request.question)
+        print(f"✅ 回答: {answer[:100]}...")  # 打印前100个字符
         return {"answer": answer}
     except Exception as e:
+        print(f"❌ 错误: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 # 启动命令: uvicorn main:app --reload
