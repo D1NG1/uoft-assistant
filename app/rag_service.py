@@ -6,13 +6,14 @@ import pdfplumber
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
-from langchain_ollama import OllamaEmbeddings, ChatOllama
+from langchain_groq import ChatGroq
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.documents import Document
 
-from app.config import PDF_DIR, PDF_FILES, DB_PATH, LLM_MODEL, EMBED_MODEL
+from app.config import PDF_DIR, PDF_FILES, DB_PATH, LLM_MODEL, EMBED_MODEL, GROQ_API_KEY
 from app.logger import setup_logger
 
 # 初始化日志
@@ -65,10 +66,18 @@ class RAGService:
         try:
             # 1. 模型初始化
             logger.info(f"初始化嵌入模型: {EMBED_MODEL}")
-            embeddings = OllamaEmbeddings(model=EMBED_MODEL)
+            embeddings = HuggingFaceEmbeddings(
+                model_name=EMBED_MODEL,
+                model_kwargs={'device': 'cpu'},
+                encode_kwargs={'normalize_embeddings': True}
+            )
 
             logger.info(f"初始化 LLM 模型: {LLM_MODEL}")
-            llm = ChatOllama(model=LLM_MODEL)
+            llm = ChatGroq(
+                groq_api_key=GROQ_API_KEY,
+                model_name=LLM_MODEL,
+                temperature=0
+            )
 
             # 2. 检查并建立向量库
             if not os.path.exists(DB_PATH):
@@ -324,8 +333,11 @@ class RAGService:
                 context = "\n\n".join([doc.page_content for doc in all_docs])
 
             # 3. 构建 prompt 并生成答案
-            from langchain_ollama import ChatOllama
-            llm = ChatOllama(model=LLM_MODEL)
+            llm = ChatGroq(
+                groq_api_key=GROQ_API_KEY,
+                model_name=LLM_MODEL,
+                temperature=0
+            )
 
             template = """
             You are an intelligent teaching assistant with access to multiple course documents and materials.
