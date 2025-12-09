@@ -17,7 +17,7 @@ PDF_FILES: List[str] = os.getenv("PDF_FILES", "MAT235Y.pdf").split(",")
 DB_PATH = os.getenv("CHROMA_DB_PATH", str(BASE_DIR / "chroma_db"))
 
 # LLM 配置
-LLM_MODEL = os.getenv("LLM_MODEL", "llama-3.1-70b-versatile")
+LLM_MODEL = os.getenv("LLM_MODEL", "llama-3.3-70b-versatile")
 EMBED_MODEL = os.getenv("EMBED_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
 
