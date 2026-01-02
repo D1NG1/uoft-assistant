@@ -72,19 +72,23 @@ class QueryResponse(BaseModel):
 @app.post("/chat", response_model=QueryResponse, summary="聊天接口")
 async def chat_endpoint(
     request: QueryRequest,
-    credentials: HTTPAuthorizationCredentials = Depends(security),
-    _: None = Depends(check_rate_limit)
+    # ========================================
+    # 🚀 部署到 AWS 时取消下面两行注释：
+    # ========================================
+    # credentials: HTTPAuthorizationCredentials = Depends(security),
+    # _: None = Depends(check_rate_limit)
 ):
     """
     处理聊天请求
 
     - **question**: 用户提出的问题（1-2000字符）
-    - **Authorization**: Bearer token（API 密钥）
 
     返回 AI 基于课程大纲生成的答案
     """
-    # 验证 API 密钥
-    await verify_api_key(credentials)
+    # ========================================
+    # 🚀 部署到 AWS 时取消下面一行注释：
+    # ========================================
+    # await verify_api_key(credentials)
 
     try:
         logger.info(f"收到问题: {request.question[:100]}...")

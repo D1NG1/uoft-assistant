@@ -1,8 +1,14 @@
 // UofT Assistant - 前端 JavaScript
 
+// ========================================
 // 配置
-const API_BASE_URL = 'http://127.0.0.1:8000';
-const API_KEY = 'dev-secret-key-change-in-production';  // 从 .env 读取的 API 密钥
+// ========================================
+const API_BASE_URL = 'http://127.0.0.1:8000';  // 🚀 部署时改为：https://your-domain.com
+
+// ========================================
+// 🚀 部署到 AWS 时取消下面一行注释，并与后端 .env 保持一致：
+// ========================================
+// const API_KEY = 'uoft-assistant-public-2024';
 
 // DOM 元素引用
 const chatBox = document.getElementById('chat-box');
@@ -48,7 +54,10 @@ async function sendMessage() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${API_KEY}`
+                // ========================================
+                // 🚀 部署到 AWS 时取消下面一行注释：
+                // ========================================
+                // 'Authorization': `Bearer ${API_KEY}`
             },
             body: JSON.stringify({ question: question })
         });
