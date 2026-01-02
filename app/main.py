@@ -121,3 +121,4 @@ async def health_check():
 
 
 # 启动命令: uvicorn app.main:app --reload
+# CI/CD 自动部署已启用 - Test deployment
