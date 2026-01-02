@@ -41,7 +41,6 @@ logs/
 # Database
 *.sqlite3
 *.db
-chroma_db/
 
 # OS
 .DS_Store
