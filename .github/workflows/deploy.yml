@@ -1,0 +1,59 @@
+name: Deploy to AWS EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/uoft-assistant
+
+            # 拉取最新代码
+            git pull origin main
+
+            # 激活虚拟环境并更新依赖
+            source venv/bin/activate
+            pip install -r requirements.txt --upgrade
+
+            # 重启服务
+            sudo systemctl restart uoft-assistant
+
+            # 等待服务启动
+            sleep 5
+
+            # 检查服务状态
+            sudo systemctl status uoft-assistant --no-pager
+
+      - name: Verify deployment
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            # 测试健康检查接口
+            curl -f http://localhost:8000/health || exit 1
+            echo "✅ Deployment successful!"
+
+      - name: Notify deployment status
+        if: always()
+        run: |
+          if [ ${{ job.status }} == 'success' ]; then
+            echo "🎉 部署成功！"
+          else
+            echo "❌ 部署失败，请检查日志"
+          fi
