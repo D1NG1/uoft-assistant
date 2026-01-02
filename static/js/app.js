@@ -1,13 +1,63 @@
 // UofT Assistant - 前端 JavaScript
 
+// ========================================
 // 配置
+// ========================================
 const API_BASE_URL = '';  // 使用相对路径通过 Nginx 代理
-const API_KEY = 'dev-secret-key-change-in-production';  // 从 .env 读取的 API 密钥
+const API_KEY = 'dev-secret-key-change-in-production';
+
+// ========================================
+// 对话历史记录
+// ========================================
+let conversationHistory = [];
 
 // DOM 元素引用
 const chatBox = document.getElementById('chat-box');
 const userInput = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
+
+// ========================================
+// 历史记录管理函数
+// ========================================
+
+// 从 localStorage 加载历史记录
+function loadChatHistory() {
+    const saved = localStorage.getItem('uoft-chat-history');
+    if (saved) {
+        try {
+            conversationHistory = JSON.parse(saved);
+            // 恢复历史消息到界面
+            conversationHistory.forEach(msg => {
+                addMessage(msg.question, 'user', false);
+                addMessage(msg.answer, 'ai', false);
+            });
+            console.log(`Loaded ${conversationHistory.length} messages from history`);
+        } catch (e) {
+            console.error('Failed to load chat history:', e);
+            conversationHistory = [];
+        }
+    }
+}
+
+// 保存对话到 localStorage
+function saveChatHistory(question, answer) {
+    conversationHistory.push({
+        question: question,
+        answer: answer,
+        timestamp: new Date().toISOString()
+    });
+    localStorage.setItem('uoft-chat-history', JSON.stringify(conversationHistory));
+}
+
+// 清空对话历史
+function clearChatHistory() {
+    if (confirm('Clear all the Chat history？')) {
+        conversationHistory = [];
+        localStorage.removeItem('uoft-chat-history');
+        chatBox.innerHTML = '<div class="message ai">Hello! I\'m your AI Assistant. Ask me anything about the syllabus!</div>';
+        console.log('Chat history cleared');
+    }
+}
 
 // 处理回车键发送
 function handleKeyPress(event) {
@@ -17,12 +67,12 @@ function handleKeyPress(event) {
 }
 
 // 添加消息到界面
-function addMessage(text, sender) {
+function addMessage(text, sender, save = true) {
     const div = document.createElement('div');
     div.classList.add('message', sender);
     div.innerText = text;
     chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight; // 自动滚动到底部
+    chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 // 发送消息的主逻辑
@@ -82,6 +132,8 @@ async function sendMessage() {
 
         if (data && data.answer) {
             addMessage(data.answer, 'ai');
+            // 保存对话到历史记录
+            saveChatHistory(question, data.answer);
         } else {
             addMessage('Error: No answer received from server', 'ai');
         }
@@ -96,3 +148,11 @@ async function sendMessage() {
         sendBtn.disabled = false;
     }
 }
+
+// ========================================
+// 页面加载时初始化
+// ========================================
+window.addEventListener('DOMContentLoaded', () => {
+    console.log('Page loaded, loading chat history...');
+    loadChatHistory();
+});

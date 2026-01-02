@@ -79,11 +79,9 @@ async def chat_endpoint(
     处理聊天请求
 
     - **question**: 用户提出的问题（1-2000字符）
-    - **Authorization**: Bearer token（API 密钥）
 
     返回 AI 基于课程大纲生成的答案
     """
-    # 验证 API 密钥
     await verify_api_key(credentials)
 
     try:
