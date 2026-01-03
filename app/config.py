@@ -25,6 +25,11 @@ OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 API_HOST = os.getenv("API_HOST", "127.0.0.1")
 API_PORT = int(os.getenv("API_PORT", "8000"))
 
+# 前端 API 基础 URL（自动检测或手动配置）
+# 本地开发：http://127.0.0.1:8000
+# 生产环境：https://your-domain.com 或留空自动检测
+API_BASE_URL = os.getenv("API_BASE_URL", "")
+
 # 安全配置
 API_KEY = os.getenv("API_KEY", "dev-secret-key-change-in-production")
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "*").split(",")

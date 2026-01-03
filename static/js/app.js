@@ -1,9 +1,9 @@
 // UofT Assistant - 前端 JavaScript
 
 // ========================================
-// 配置
+// 配置（从后端动态获取）
 // ========================================
-const API_BASE_URL = 'http://127.0.0.1:8000';  // 🚀 部署时改为：https://your-domain.com
+let API_BASE_URL = '';  // 将从 /api/config 动态获取
 
 // ========================================
 // 🚀 部署到 AWS 时取消下面一行注释，并与后端 .env 保持一致：
@@ -19,6 +19,29 @@ let conversationHistory = [];
 const chatBox = document.getElementById('chat-box');
 const userInput = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
+
+// ========================================
+// 配置加载函数
+// ========================================
+
+// 从后端获取配置
+async function loadConfig() {
+    try {
+        // 首次调用使用相对路径（自动使用当前域名）
+        const response = await fetch('/api/config');
+        if (!response.ok) {
+            throw new Error('Failed to load config');
+        }
+        const config = await response.json();
+        API_BASE_URL = config.api_base_url;
+        console.log('Loaded API config:', API_BASE_URL);
+    } catch (error) {
+        console.error('Failed to load config, using fallback:', error);
+        // 降级：使用当前页面的 origin 作为 API 基础 URL
+        API_BASE_URL = window.location.origin;
+        console.log('Fallback API URL:', API_BASE_URL);
+    }
+}
 
 // ========================================
 // 历史记录管理函数
@@ -161,7 +184,14 @@ async function sendMessage() {
 // ========================================
 // 页面加载时初始化
 // ========================================
-window.addEventListener('DOMContentLoaded', () => {
-    console.log('Page loaded, loading chat history...');
+window.addEventListener('DOMContentLoaded', async () => {
+    console.log('Page loaded, initializing...');
+
+    // 1. 先加载配置
+    await loadConfig();
+
+    // 2. 再加载聊天历史
     loadChatHistory();
+
+    console.log('Initialization complete');
 });

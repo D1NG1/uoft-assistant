@@ -52,11 +52,20 @@ def extract_course_codes(question: str) -> List[str]:
 class RAGService:
     """RAG (Retrieval-Augmented Generation) 服务类"""
 
-    def __init__(self):
+    def __init__(self, auto_initialize: bool = False):
+        """初始化 RAG 服务
+
+        Args:
+            auto_initialize: 是否在初始化时自动加载（默认 False，延迟加载）
+        """
         self.vector_store: Optional[Chroma] = None
         self.retriever = None
         self.chain = None
-        self.initialize_rag()
+        self.is_ready: bool = False
+        self.initialization_error: Optional[str] = None
+
+        if auto_initialize:
+            self.initialize_rag()
 
     def initialize_rag(self) -> None:
         """初始化 RAG 引擎"""
@@ -115,9 +124,12 @@ class RAGService:
                 | llm
                 | StrOutputParser()
             )
+            self.is_ready = True
             logger.info("RAG 系统初始化完成，系统就绪！")
 
         except Exception as e:
+            self.is_ready = False
+            self.initialization_error = str(e)
             logger.error(f"RAG 初始化失败: {str(e)}", exc_info=True)
             raise
 
@@ -270,8 +282,11 @@ class RAGService:
         Raises:
             RuntimeError: 当系统未初始化时
         """
-        if not self.vector_store:
-            error_msg = "RAG 系统未初始化"
+        if not self.is_ready:
+            if self.initialization_error:
+                error_msg = f"RAG 系统初始化失败: {self.initialization_error}"
+            else:
+                error_msg = "RAG 系统正在初始化中，请稍后再试"
             logger.error(error_msg)
             raise RuntimeError(error_msg)
 
