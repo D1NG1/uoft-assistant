@@ -41,6 +41,10 @@ logs/
 # Database
 *.sqlite3
 *.db
+chroma_db/
+
+# Course PDFs (add your own locally)
+data/*.pdf
 
 # OS
 .DS_Store
