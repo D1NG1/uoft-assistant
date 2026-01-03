@@ -54,9 +54,21 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # 测试健康检查接口
-            curl -f http://localhost:8000/health || exit 1
-            echo "✅ Deployment successful!"
+            # 等待服务完全启动（重试机制）
+            echo "等待服务启动..."
+            for i in {1..30}; do
+              if curl -f http://localhost:8000/health > /dev/null 2>&1; then
+                echo "✅ 服务健康检查通过！"
+                exit 0
+              fi
+              echo "尝试 $i/30: 服务还未就绪，等待 2 秒..."
+              sleep 2
+            done
+
+            # 如果 30 次尝试都失败，输出详细信息
+            echo "❌ 健康检查失败，查看服务状态："
+            sudo systemctl status uoft-assistant --no-pager
+            exit 1
 
       - name: Notify deployment status
         if: always()
