@@ -4,7 +4,7 @@
 // 配置
 // ========================================
 const API_BASE_URL = '';  // 使用相对路径通过 Nginx 代理
-const API_KEY = 'dev-secret-key-change-in-production';
+const API_KEY = 'prod-uoft-assistant-2024';
 
 // ========================================
 // 对话历史记录

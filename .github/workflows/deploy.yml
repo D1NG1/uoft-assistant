@@ -32,11 +32,17 @@ jobs:
             pip install --upgrade pip
             pip install -r requirements.txt
 
-            # 重启服务
+            # 检查并清理旧的 ChromaDB 数据库（避免版本不兼容）
+            if [ -d "chroma_db" ]; then
+                echo "检测到旧的 chroma_db，删除后将自动重建..."
+                rm -rf chroma_db
+            fi
+
+            # 重启服务（会自动重建 chroma_db）
             sudo systemctl restart uoft-assistant
 
-            # 等待服务启动
-            sleep 5
+            # 等待服务启动（如果需要重建数据库，会需要更长时间）
+            sleep 10
 
             # 检查服务状态
             sudo systemctl status uoft-assistant --no-pager
