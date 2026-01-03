@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).parent.parent
 
 # PDF 文件路径配置
 PDF_DIR = Path(os.getenv("PDF_DIRECTORY", str(BASE_DIR / "data")))
-PDF_FILES: List[str] = os.getenv("PDF_FILES", "MAT235Y.pdf").split(",")
+PDF_FILES: List[str] = os.getenv("PDF_FILES", "MAT235Y1.pdf").split(",")
 
 # 数据库配置
 DB_PATH = os.getenv("CHROMA_DB_PATH", str(BASE_DIR / "chroma_db"))
