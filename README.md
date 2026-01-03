@@ -1,8 +1,20 @@
-# UofT Course Assistant 🎓
+# UofT Syllabus Assistant 🎓
 
-An AI-powered chatbot that helps University of Toronto students get instant answers from course syllabi using RAG (Retrieval-Augmented Generation).
+An AI-powered chatbot that helps University of Toronto students get instant answers from course syllabus using RAG (Retrieval-Augmented Generation).
 
-**Live Demo**: [http://3.140.6.205/static/index.html](http://3.140.6.205/static/index.html)
+**Live Demo**: [http://3.140.6.205/](http://3.140.6.205/)
+
+## 💬 Try These Sample Questions
+
+```
+"What is the grading scheme for MAT235?"
+"When are the office hours for STA237?"
+"What are the prerequisites for MAT224?"
+"What topics are covered in week 5 of MAT235?"
+"How is the final exam weighted in STA237?"
+"What textbook is required for MAT224?"
+"Tell me about the late submission policy"
+```
 
 ## ✨ Key Features
 
@@ -44,41 +56,3 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 Visit [http://localhost:8000/static/index.html](http://localhost:8000/static/index.html)
 
-## 📁 Project Structure
-
-```
-app/
-├── main.py           # FastAPI app
-├── rag_service.py    # RAG logic + ChromaDB
-├── middleware.py     # Auth + rate limiting
-static/
-├── index.html        # Chat UI
-└── js/app.js         # Frontend logic
-.github/workflows/
-└── deploy.yml        # CI/CD pipeline
-```
-
-## 🔌 API Example
-
-```bash
-curl -X POST http://localhost:8000/chat \
-  -H "Authorization: Bearer your-api-key" \
-  -H "Content-Type: application/json" \
-  -d '{"question": "What is the grading scheme for MAT235?"}'
-```
-
-## 🚢 Deployment
-
-Push to `main` branch → GitHub Actions automatically deploys to AWS EC2
-
-```bash
-git push origin main
-```
-
-See [DEPLOYMENT.md](DEPLOYMENT.md) for setup details.
-
-## 📝 License
-
-MIT License - See [LICENSE](LICENSE) file
-
----
