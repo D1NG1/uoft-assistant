@@ -25,13 +25,12 @@ jobs:
             cd /home/ubuntu/uoft-assistant
 
             # 拉取最新代码
-            git reset --hard HEAD
             git pull origin main
 
-            # 激活虚拟环境并更新依赖
+            # 激活虚拟环境并更新依赖（只安装新的或缺失的包）
             source venv/bin/activate
-            pip freeze | xargs pip uninstall -y
-            pip install --no-cache-dir -r requirements.txt
+            pip install --upgrade pip
+            pip install -r requirements.txt
 
             # 重启服务
             sudo systemctl restart uoft-assistant
