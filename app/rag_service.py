@@ -49,7 +49,6 @@ def extract_course_codes(question: str) -> List[str]:
 
     return course_codes
 
-
 class RAGService:
     """RAG (Retrieval-Augmented Generation) 服务类"""
 
