@@ -30,6 +30,7 @@ jobs:
 
             # 激活虚拟环境并更新依赖
             source venv/bin/activate
+            pip freeze | xargs pip uninstall -y
             pip install --no-cache-dir -r requirements.txt
 
             # 重启服务
